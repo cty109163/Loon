@@ -57,7 +57,7 @@ proxy-providers:
       enable: true
       url: https://www.google.com/generate_204
       interval: 300
-      timeout: 500
+      timeout: 5000
     filter: 'PIA'
 
 proxy-groups:
