@@ -50,7 +50,7 @@ proxy-providers:
 
   exit:
     type: http
-    url: "https://gist.githubusercontent.com/cty109163/45fe43bc3bdb0756a7a55de6adc94e68/raw/pia-clash"
+    url: "https://gist.githubusercontent.com/cty109163/45fe43bc3bdb0756a7a55de6adc94e68/raw/socks"
     path: ./proxy_providers/exit.yaml
     interval: 3600
     health-check:
@@ -58,7 +58,7 @@ proxy-providers:
       url: https://www.google.com/generate_204
       interval: 300
       timeout: 5000
-    filter: 'PIA'
+    filter: 'US'
 
 proxy-groups:
   - name: "入口自动测速"
