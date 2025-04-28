@@ -35,51 +35,62 @@ dns:
 
 
 proxy-providers:
-  provider1:
+  entrance:
     type: http
-    url: "https://gist.githubusercontent.com/cty109163/45fe43bc3bdb0756a7a55de6adc94e68/raw/mihono"
-    path: ./proxy_providers/provider1.yaml
+    url: "https://andy.usuallyask.filegear-sg.me/sub/full-normal/71990658-7fd1-4263-a180-39d6cabda424?app=clash#BPB-Full-Normal"
+    path: ./proxy_providers/entrance.yaml
     interval: 3600
     health-check:
       enable: true
       url: https://cp.cloudflare.com
       interval: 300
       timeout: 500
+      filter: 'Clean|VLESS'   # 这里用正则，只挑名字里含“入口”或“A”的节点
       
+  exit:
+    type: http
+    url: "https://gist.githubusercontent.com/cty109163/45fe43bc3bdb0756a7a55de6adc94e68/raw/pia-clash"
+    path: ./proxy_providers/exit.yaml
+    interval: 3600
+    health-check:
+      enable: true
+      url: https://cp.cloudflare.com
+      interval: 300
+      timeout: 500
+      filter: 'PIA'   # 这里用正则，只挑名字里含“入口”或“A”的节点
+
   
-proxies:
-  - {name: cf-jp, server: 172.104.127.132, port: 443, client-fingerprint: randomized, type: vless, uuid: 8f5d637e-4e34-4ee0-824b-ff189c4c9dde, tls: true, tfo: false, skip-cert-verify: true, servername: fdtest.usuallyask.top, network: ws, ws-opts: {path: "/?ed=2048", headers: {Host: fdtest.usuallyask.top}}}
-        
-  - name: PL-Atman
-    type: hysteria2
-    server: 85.194.243.117
-    port: 41603
-    password: Aby5sKa391cQUYgR
-    alpn:
-     - h3
-    sni: www.bing.com
-    skip-cert-verify: true
-    fast-open: true
+
 
 
 proxy-groups:
+ - name: "入口自动测速"
+    type: url-test
+    use:
+      - entrance
+    url: "http://cp.cloudflare.com/generate_204"
+    interval: 300
+
+  - name: "出口自动测速"
+    type: url-test
+    use:
+      - exit
+    url: "http://cp.cloudflare.com/generate_204"
+    interval: 300
+
+  - name: "Chain"
+    type: relay
+    proxies:
+      - "入口自动测速"
+      - "出口自动测速"
+      
   - name: 🚀 节点选择
     type: select
     proxies:
       - ♻️ 自动选择
       - DIRECT
-      - cf-jp
-      - PL-Atman
-    use: [provider1]
-
-  - name: ♻️ 自动选择
-    type: url-test
-    url: http://www.msftncsi.com/ncsi.txt
-    interval: 3000
-    tolerance: 50
-    proxies:
-      - cf-jp
-      - PL-Atman
+      - Chain
+      - 入口自动测速
 #规则订阅中的proxy为更新时使用，不可设置为reject     
 rule-providers:
   GoogleCNProxyIP:
