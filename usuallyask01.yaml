@@ -58,7 +58,7 @@ proxy-providers:
       url: https://www.google.com/generate_204
       interval: 300
       timeout: 5000
-    filter: 'US'
+    filter: 'PIA'
 
 proxy-groups:
   - name: "入口自动测速"
