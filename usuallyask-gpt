@@ -36,7 +36,7 @@ dns:
 proxy-providers:
   entrance:
     type: http
-    url: "https://andy.usuallyask.filegear-sg.me/sub/normal/71990658-7fd1-4263-a180-39d6cabda424"
+    url: "https://andy.usuallyask.filegear-sg.me/sub/full-normal/71990658-7fd1-4263-a180-39d6cabda424?app=clash#BPB-Full-Normal"
     path: ./proxy_providers/entrance.yaml
     interval: 3600
     health-check:
@@ -85,12 +85,14 @@ proxy-groups:
       - DIRECT
       - Chain-代理链
       - 入口选择
-      
+      - 出口选择
+
   - name: "🎬 流媒体解锁"
     type: select
     proxies:
       - Chain-代理链
       - 入口选择
+      - 出口选择
       - DIRECT
 
   - name: "🌍 国际流量"
@@ -98,6 +100,7 @@ proxy-groups:
     proxies:
       - Chain-代理链
       - 入口选择
+      - 出口选择
       - DIRECT
 
   - name: "📺 YouTube/Netflix/Disney+"
@@ -106,6 +109,7 @@ proxy-groups:
       - 🎬 流媒体解锁
       - Chain-代理链
       - 入口选择
+      - 出口选择
       - DIRECT
 
 rule-providers:
