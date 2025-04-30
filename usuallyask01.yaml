@@ -50,7 +50,7 @@ proxy-providers:
 
   exit:
     type: http
-    url: "https://gist.githubusercontent.com/cty109163/45fe43bc3bdb0756a7a55de6adc94e68/raw/socks"
+    url: "http://127.0.0.1:38324/download/piavpn_1736738570100?target=ClashMeta"
     path: ./proxy_providers/exit.yaml
     interval: 3600
     health-check:
