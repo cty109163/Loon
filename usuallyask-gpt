@@ -1,0 +1,247 @@
+#FROM:https://cf.buliang0.cf/clash-rules/nodnsleak.ini
+#无分组
+mixed-port: 7890
+allow-lan: false
+mode: rule
+log-level: info
+external-controller: 127.0.0.1:9090
+
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  fallback:
+    - https://1.1.1.1/dns-query
+    - https://1.0.0.1/dns-query
+    - https://8.8.8.8/dns-query
+    - https://8.8.4.4/dns-query
+  default-nameserver:
+    - 114.114.114.114
+    - 8.8.8.8
+  proxy-server-nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*"
+    - +.lan
+    - +.local
+    - time.*.com
+    - ntp.*.com
+    - +.market.xiaomi.com
+
+proxy-providers:
+  entrance:
+    type: http
+    url: "https://andy.usuallyask.filegear-sg.me/sub/normal/71990658-7fd1-4263-a180-39d6cabda424"
+    path: ./proxy_providers/entrance.yaml
+    interval: 3600
+    health-check:
+      enable: true
+      url: http://cp.cloudflare.com/generate_204
+      interval: 300
+      timeout: 500
+    filter: 'Clean|VLESS'
+
+  exit:
+    type: http
+    url: "https://gist.githubusercontent.com/cty109163/45fe43bc3bdb0756a7a55de6adc94e68/raw/pia-clash"
+    path: ./proxy_providers/exit.yaml
+    interval: 3600
+    health-check:
+      enable: true
+      url: http://cp.cloudflare.com/generate_204
+      interval: 300
+      timeout: 500
+    filter: 'PIA'
+
+proxy-groups:
+  - name: "入口选择"
+    type: url-test
+    use:
+      - entrance
+    url: "http://cp.cloudflare.com/generate_204"
+    interval: 300
+
+  - name: "出口选择"
+    type: url-test
+    use:
+      - exit
+    url: "http://cp.cloudflare.com/generate_204"
+    interval: 300
+
+  - name: "Chain-代理链"
+    type: relay
+    proxies:
+      - "入口选择"
+      - "出口选择"
+
+  - name: "🚀 节点选择"
+    type: select
+    proxies:
+      - DIRECT
+      - Chain-代理链
+      - 入口选择
+      
+  - name: "🎬 流媒体解锁"
+    type: select
+    proxies:
+      - Chain-代理链
+      - 入口选择
+      - DIRECT
+
+  - name: "🌍 国际流量"
+    type: select
+    proxies:
+      - Chain-代理链
+      - 入口选择
+      - DIRECT
+
+  - name: "📺 YouTube/Netflix/Disney+"
+    type: select
+    proxies:
+      - 🎬 流媒体解锁
+      - Chain-代理链
+      - 入口选择
+      - DIRECT
+
+rule-providers:
+  GoogleCNProxyIP:
+    type: http
+    path: ./rules/GoogleCNProxyIP.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/GoogleCNProxyIP.list"
+    interval: 86400
+    behavior: classical
+    format: text
+
+  LocalAreaNetwork:
+    type: http
+    path: ./rules/LocalAreaNetwork.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list"
+    interval: 86400
+    behavior: classical
+    format: text
+
+  UnBan:
+    type: http
+    path: ./rules/UnBan.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/UnBan.list"
+    interval: 86400
+    behavior: classical
+    format: text
+
+  ChinaDomain:
+    type: http
+    path: ./rules/ChinaDomain.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaDomain.list"
+    interval: 86400
+    behavior: classical
+    format: text
+
+  ChinaMedia:
+    type: http
+    path: ./rules/ChinaMedia.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaMedia.list"
+    interval: 86400
+    behavior: classical
+    format: text
+
+  BanAD:
+    type: http
+    path: ./rules/BanAD.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list"
+    interval: 86400
+    behavior: classical
+    format: text
+
+  BanProgramAD:
+    type: http
+    path: ./rules/BanProgramAD.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanProgramAD.list"
+    interval: 86400
+    behavior: classical
+    format: text
+
+  ChinaCompany:
+    type: http
+    path: ./rules/ChinaCompany.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaCompanyIp.list"
+    interval: 86400
+    behavior: classical
+    format: text
+
+  ChinaIp:
+    type: http
+    path: ./rules/ChinaIp.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaIp.list"
+    interval: 86400
+    behavior: classical
+    format: text
+
+rules:
+  - DST-PORT,53,dns-out
+  - RULE-SET,LocalAreaNetwork,DIRECT
+  - RULE-SET,ChinaDomain,DIRECT
+  - RULE-SET,ChinaIp,DIRECT
+  - RULE-SET,BanAD,REJECT
+  - RULE-SET,BanProgramAD,REJECT
+  - DOMAIN-KEYWORD,netflix,📺 YouTube/Netflix/Disney+
+  - DOMAIN-KEYWORD,disney,📺 YouTube/Netflix/Disney+
+  - DOMAIN-KEYWORD,youtube,📺 YouTube/Netflix/Disney+
+  - DOMAIN-KEYWORD,googlevideo,📺 YouTube/Netflix/Disney+
+  - DOMAIN-KEYWORD,amazonvideo,🎬 流媒体解锁
+  - GEOIP,CN,DIRECT
+  - MATCH,🌍 国际流量
+
+secret: ""
+ipv6: true
+unified-delay: false
+tcp-concurrent: false
+find-process-mode: strict
+
+tun:
+  enable: true
+  stack: mixed
+  auto-route: true
+  auto-redirect: false
+  auto-detect-interface: true
+  dns-hijack:
+    - any:53
+  mtu: 1500
+
+sniffer:
+  enable: true
+  parse-pure-ip: true
+  force-dns-mapping: true
+  override-destination: false
+  sniff:
+    HTTP:
+      ports:
+        - 80
+        - 443
+      override-destination: false
+    TLS:
+      ports:
+        - 443
+    QUIC:
+      ports:
+        - 443
+  skip-domain:
+    - +.push.apple.com
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+geo-auto-update: true
+geo-update-interval: 24
+geodata-mode: true
+
+geox-url:
+  geoip: https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip-lite.dat
+  geosite: https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.dat
+  mmdb: https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/country-lite.mmdb
+  asn: https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb
