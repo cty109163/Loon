@@ -1,4 +1,4 @@
-https://gist.githubusercontent.com/cty109163/45fe43bc3bdb0756a7a55de6adc94e68/raw/pia-clash#FROM:https://cf.buliang0.cf/clash-rules/nodnsleak.ini
+#FROM:https://cf.buliang0.cf/clash-rules/nodnsleak.ini
 #无分组
 mixed-port: 7890
 allow-lan: false
