@@ -69,7 +69,7 @@ proxy-groups:
     interval: 300
 
   - name: "出口自动测速"
-    type: url-test
+    type: select
     use:
       - exit
     url: "https://www.google.com/generate_204"
