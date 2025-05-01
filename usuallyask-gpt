@@ -1,5 +1,3 @@
-#FROM:https://cf.buliang0.cf/clash-rules/nodnsleak.ini
-#无分组
 mixed-port: 7890
 allow-lan: false
 mode: rule
@@ -59,19 +57,18 @@ proxy-providers:
     filter: 'PIA'
 
 proxy-groups:
+  - name: "dns-out"
+    type: dns
+
   - name: "入口选择"
-    type: url-test
+    type: select
     use:
       - entrance
-    url: "http://cp.cloudflare.com/generate_204"
-    interval: 300
 
-  - name: "出口选择"
-    type: url-test
+  - name: "出口自动测速"
+    type: select
     use:
       - exit
-    url: "http://cp.cloudflare.com/generate_204"
-    interval: 300
 
   - name: "Chain-代理链"
     type: relay
@@ -85,14 +82,12 @@ proxy-groups:
       - DIRECT
       - Chain-代理链
       - 入口选择
-      - 出口选择
 
   - name: "🎬 流媒体解锁"
     type: select
     proxies:
       - Chain-代理链
       - 入口选择
-      - 出口选择
       - DIRECT
 
   - name: "🌍 国际流量"
@@ -100,7 +95,6 @@ proxy-groups:
     proxies:
       - Chain-代理链
       - 入口选择
-      - 出口选择
       - DIRECT
 
   - name: "📺 YouTube/Netflix/Disney+"
@@ -109,30 +103,28 @@ proxy-groups:
       - 🎬 流媒体解锁
       - Chain-代理链
       - 入口选择
-      - 出口选择
       - DIRECT
 
-rule-providers:
-  GoogleCNProxyIP:
-    type: http
-    path: ./rules/GoogleCNProxyIP.list
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/GoogleCNProxyIP.list"
-    interval: 86400
-    behavior: classical
-    format: text
+rules:
+  - DST-PORT,53,dns-out
+  - RULE-SET,LocalAreaNetwork,DIRECT
+  - RULE-SET,ChinaDomain,DIRECT
+  - RULE-SET,ChinaIp,DIRECT
+  - RULE-SET,BanAD,REJECT
+  - RULE-SET,BanProgramAD,REJECT
+  - DOMAIN-KEYWORD,netflix,📺 YouTube/Netflix/Disney+
+  - DOMAIN-KEYWORD,disney,📺 YouTube/Netflix/Disney+
+  - DOMAIN-KEYWORD,youtube,📺 YouTube/Netflix/Disney+
+  - DOMAIN-KEYWORD,googlevideo,📺 YouTube/Netflix/Disney+
+  - DOMAIN-KEYWORD,amazonvideo,🎬 流媒体解锁
+  - GEOIP,CN,DIRECT
+  - MATCH,🌍 国际流量
 
+rule-providers:
   LocalAreaNetwork:
     type: http
     path: ./rules/LocalAreaNetwork.list
     url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list"
-    interval: 86400
-    behavior: classical
-    format: text
-
-  UnBan:
-    type: http
-    path: ./rules/UnBan.list
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/UnBan.list"
     interval: 86400
     behavior: classical
     format: text
@@ -145,10 +137,10 @@ rule-providers:
     behavior: classical
     format: text
 
-  ChinaMedia:
+  ChinaIp:
     type: http
-    path: ./rules/ChinaMedia.list
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaMedia.list"
+    path: ./rules/ChinaIp.list
+    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaIp.list"
     interval: 86400
     behavior: classical
     format: text
@@ -169,43 +161,6 @@ rule-providers:
     behavior: classical
     format: text
 
-  ChinaCompany:
-    type: http
-    path: ./rules/ChinaCompany.list
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaCompanyIp.list"
-    interval: 86400
-    behavior: classical
-    format: text
-
-  ChinaIp:
-    type: http
-    path: ./rules/ChinaIp.list
-    url: "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaIp.list"
-    interval: 86400
-    behavior: classical
-    format: text
-
-rules:
-  - DST-PORT,53,dns-out
-  - RULE-SET,LocalAreaNetwork,DIRECT
-  - RULE-SET,ChinaDomain,DIRECT
-  - RULE-SET,ChinaIp,DIRECT
-  - RULE-SET,BanAD,REJECT
-  - RULE-SET,BanProgramAD,REJECT
-  - DOMAIN-KEYWORD,netflix,📺 YouTube/Netflix/Disney+
-  - DOMAIN-KEYWORD,disney,📺 YouTube/Netflix/Disney+
-  - DOMAIN-KEYWORD,youtube,📺 YouTube/Netflix/Disney+
-  - DOMAIN-KEYWORD,googlevideo,📺 YouTube/Netflix/Disney+
-  - DOMAIN-KEYWORD,amazonvideo,🎬 流媒体解锁
-  - GEOIP,CN,DIRECT
-  - MATCH,🌍 国际流量
-
-secret: ""
-ipv6: true
-unified-delay: false
-tcp-concurrent: false
-find-process-mode: strict
-
 tun:
   enable: true
   stack: mixed
@@ -223,16 +178,11 @@ sniffer:
   override-destination: false
   sniff:
     HTTP:
-      ports:
-        - 80
-        - 443
-      override-destination: false
+      ports: [80, 443]
     TLS:
-      ports:
-        - 443
+      ports: [443]
     QUIC:
-      ports:
-        - 443
+      ports: [443]
   skip-domain:
     - +.push.apple.com
 
