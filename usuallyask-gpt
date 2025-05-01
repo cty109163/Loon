@@ -65,7 +65,7 @@ proxy-groups:
     use:
       - entrance
 
-  - name: "出口自动测速"
+  - name: "出口选择"
     type: select
     use:
       - exit
