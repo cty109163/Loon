@@ -62,7 +62,7 @@ proxy-providers:
 
 proxy-groups:
   - name: "入口自动测速"
-    type: url-test
+    type: select
     use:
       - entrance
     url: "https://www.google.com/generate_204"
