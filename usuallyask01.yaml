@@ -38,7 +38,7 @@ dns:
 proxy-providers:
   entrance:
     type: http
-    url: "https://andy.usuallyask.filegear-sg.me/sub/normal/71990658-7fd1-4263-a180-39d6cabda424"
+    url: "https://andy.usuallyask.dpdns.org/sub/normal/71990658-7fd1-4263-a180-39d6cabda424"
     path: ./proxy_providers/entrance.yaml
     interval: 3600
     health-check:
