@@ -99,7 +99,7 @@ proxy-groups:
       - DIRECT
       - Chain
       - 入口自动测速
-      - sakura
+      
 rule-providers:
   GoogleCNProxyIP:
     type: http
