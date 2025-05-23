@@ -71,6 +71,18 @@ proxies:
       host: "www.tesla.com"
       password: "cXqj5WPjxo5RIeOitVxNlg=="
       version: 3
+ - name: "hysteria2"
+   type: hysteria2
+   server: saku.773220.xyz
+   port: 443
+   password: f5oX1U6KVWpiPlhTNGvtcbEY
+   up: "15 Mbps"
+   down: "30 Mbps"
+   sni: bing.com
+   skip-cert-verify: false
+   alpn:
+     - h3
+  
 proxy-groups:
   - name: "入口自动测速"
     type: select
