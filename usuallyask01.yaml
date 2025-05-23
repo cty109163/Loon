@@ -61,7 +61,7 @@ proxy-providers:
     filter: 'PIA'
 
   proxies:    
-   -name: sakura
+   -name: 樱
     type: ss
     server: 77.111.110.62
     port: 443
