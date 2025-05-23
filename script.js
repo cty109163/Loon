@@ -188,7 +188,27 @@ function overwriteProxyGroups (params) {
     const getProxiesByRegex = (regex) => {
         return params.proxies.filter(e => regex.test(e.name)).map(e => e.name);
     };
-
+        // 上层策略分组
+    const groups = [
+        {
+            name: proxyName,
+            type: "select",
+            proxies: ["CF", "CHAIN", "DIRECT"],
+            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/adjust.svg"
+        },
+        {
+            name: "CHAIN",
+            type: "select",
+            proxies: ["CHAIN-V4-AUTO", "CHAIN-V6-AUTO", "CHAIN-V4-SELECT", "CHAIN-V6-SELECT"],
+            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/balance.svg"
+        },
+        {
+            name: "CF",
+            type: "select",
+            proxies: ["V4-AUTO", "V6-AUTO", "V4-SELECT", "V6-SELECT"],
+            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/speed.svg"
+        }
+    ];
     // V4/V6 自动分组
     const v4Auto = {
         name: "V4-AUTO",
@@ -236,28 +256,6 @@ function overwriteProxyGroups (params) {
         type: "select",
         proxies: getProxiesByRegex(piaRegex)
     };
-
-    // 上层策略分组
-    const groups = [
-        {
-            name: proxyName,
-            type: "select",
-            proxies: ["CF", "CHAIN", "DIRECT"],
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/adjust.svg"
-        },
-        {
-            name: "CHAIN",
-            type: "select",
-            proxies: ["CHAIN-V4-AUTO", "CHAIN-V6-AUTO", "CHAIN-V4-SELECT", "CHAIN-V6-SELECT"],
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/balance.svg"
-        },
-        {
-            name: "CF",
-            type: "select",
-            proxies: ["V4-AUTO", "V6-AUTO", "V4-SELECT", "V6-SELECT"],
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/speed.svg"
-        }
-    ];
 
     // relay 链式代理分组，添加 PIA 出口
     const relayGroups = [
