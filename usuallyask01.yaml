@@ -60,6 +60,18 @@ proxy-providers:
       timeout: 5000
     filter: 'PIA'
 
+  proxies:    
+   -name: sakura
+    type: ss
+    server: 77.111.110.62
+    port: 443
+    cipher: 2022-blake3-aes-128-gcm
+    password: "N1nK985MGCA61+cebhDYlw=="
+    plugin: shadow-tls
+    plugin-opts:
+      host: "www.tesla.com"
+      password: "cXqj5WPjxo5RIeOitVxNlg=="
+      version: 3
 proxy-groups:
   - name: "入口自动测速"
     type: select
@@ -87,7 +99,7 @@ proxy-groups:
       - DIRECT
       - Chain
       - 入口自动测速
-
+      - sakura
 rule-providers:
   GoogleCNProxyIP:
     type: http
