@@ -71,16 +71,16 @@ proxies:
       host: "www.tesla.com"
       password: "cXqj5WPjxo5RIeOitVxNlg=="
       version: 3
- - name: sakura
-   type: hysteria2
-   server: saku.773220.xyz
-   port: 443
-   password: f5oX1U6KVWpiPlhTNGvtcbEY
-   up: "15 Mbps"
-   down: "30 Mbps"
-   sni: bing.com
-   skip-cert-verify: false
-   alpn:
+  - name: sakura
+    type: hysteria2
+    server: 77.111.110.62
+    port: 443
+    password: f5oX1U6KVWpiPlhTNGvtcbEY
+    up: "15 Mbps"
+    down: "30 Mbps"
+    sni: saku.773220.xyz
+    skip-cert-verify: false
+    alpn:
      - h3
   
 proxy-groups:
