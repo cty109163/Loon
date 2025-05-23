@@ -44,7 +44,7 @@ function overwriteRules (params) {
         "RULE-SET,gfw," + proxyName,
         "RULE-SET,greatfire," + proxyName,
         "RULE-SET,proxy," + proxyName,
-        "MATCH, PROXY-MODE",
+        "MATCH, Proxy-Mode",
     ];
     const ruleProviders = {
         reject: {
