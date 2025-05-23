@@ -59,9 +59,8 @@ proxy-providers:
       interval: 300
       timeout: 5000
     filter: 'PIA'
-
-  proxies:    
-   -name: 樱
+proxies:    
+  - name: 樱
     type: ss
     server: 77.111.110.62
     port: 443
@@ -98,6 +97,7 @@ proxy-groups:
     proxies:
       - DIRECT
       - Chain
+      - 樱
       - 入口自动测速
       
 rule-providers:
