@@ -25,7 +25,7 @@ function overwriteRules (params) {
 
     const rules = [
         ...customRules,
-        "RULE-SET,reject, 广告拦截",
+        "RULE-SET,reject, REJECT",
         "RULE-SET,direct,DIRECT",
         "RULE-SET,cncidr,DIRECT",
         "RULE-SET,private,DIRECT",
@@ -44,7 +44,7 @@ function overwriteRules (params) {
         "RULE-SET,gfw," + proxyName,
         "RULE-SET,greatfire," + proxyName,
         "RULE-SET,proxy," + proxyName,
-        "MATCH, 漏网之鱼",
+        "MATCH, PROXY-MODE",
     ];
     const ruleProviders = {
         reject: {
@@ -180,123 +180,122 @@ function overwriteProxyGroups (params) {
         //  { name: '1 - 香港 - 示例 ', type: *, server: **, port: *, cipher: **, password: **, udp: true }
 
     );
+    // 正则匹配
+    const v4Regex = /(IPv4|Clean IP|Domain)/i;
+    const v6Regex = /IPv6/i;
+    const piaRegex = /PIA/i;
 
-    // 所有代理
-    const allProxies = params ["proxies"].map ((e) => e.name);
-    // 自动选择代理组，按地区分组选延迟最低
-    const autoProxyGroupRegexs = [
-        { name: "V4-AUTO", regex: / IPv4|Domain|Clean/ },
-        { name: "V6-AUTO", regex: / IPv6 / },
-        { name: "PIA-AUTO", regex: / PIA/ },
+    const getProxiesByRegex = (regex) => {
+        return params.proxies.filter(e => regex.test(e.name)).map(e => e.name);
+    };
 
-    ];
+    // V4/V6 自动分组
+    const v4Auto = {
+        name: "V4-AUTO",
+        type: "url-test",
+        url: "http://www.gstatic.com/generate_204",
+        interval: 300,
+        tolerance: 50,
+        proxies: getProxiesByRegex(v4Regex)
+    };
 
-    const autoProxyGroups = autoProxyGroupRegexs
-        .map ((item) => ({
-            name: item.name,
-            type: "url-test",
-            url: "http://www.gstatic.com/generate_204",
-            interval: 300,
-            tolerance: 50,
-            proxies: getProxiesByRegex (params, item.regex),
-            hidden: true,
-        }))
-        .filter ((item) => item.proxies.length > 0);
+    const v6Auto = {
+        name: "V6-AUTO",
+        type: "url-test",
+        url: "http://www.gstatic.com/generate_204",
+        interval: 300,
+        tolerance: 50,
+        proxies: getProxiesByRegex(v6Regex)
+    };
 
-    // 手工选择代理组
-    const manualProxyGroups = [
-        { name: "V4-SELECT", regex: / IPv4|Domain|Clean/ },
-        { name: "V6-SELECT", regex: / IPv6 / },
-        { name: "PIA-SELECT", regex: / PIA/ },
-    ];
+    // V4/V6 手动选择分组
+    const v4Select = {
+        name: "V4-SELECT",
+        type: "select",
+        proxies: getProxiesByRegex(v4Regex)
+    };
 
-    const manualProxyGroupsConfig = manualProxyGroups
-        .map ((item) => ({
-            name: item.name,
-            type: "select",
-            proxies: getManualProxiesByRegex (params, item.regex),
-            icon: item.icon,
-            hidden: false,
-        }))
-        .filter ((item) => item.proxies.length > 0);
+    const v6Select = {
+        name: "V6-SELECT",
+        type: "select",
+        proxies: getProxiesByRegex(v6Regex)
+    };
 
+    // PIA 分组
+    const piaAuto = {
+        name: "PIA-AUTO",
+        type: "url-test",
+        url: "http://www.gstatic.com/generate_204",
+        interval: 300,
+        tolerance: 50,
+        proxies: getProxiesByRegex(piaRegex)
+    };
+
+    const piaSelect = {
+        name: "PIA-SELECT",
+        type: "select",
+        proxies: getProxiesByRegex(piaRegex)
+    };
+
+    // 上层策略分组
     const groups = [
         {
             name: proxyName,
             type: "select",
-            url: "http://www.gstatic.com/generate_204",
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/adjust.svg",
-            proxies: [
-                "CHAIN",
-                "CF",
-                "DIRECT",
-            ],
+            proxies: ["CF", "CHAIN", "DIRECT"],
+            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/adjust.svg"
+        },
+        {
+            name: "CHAIN",
+            type: "select",
+            proxies: ["CHAIN-V4-AUTO", "CHAIN-V6-AUTO", "CHAIN-V4-SELECT", "CHAIN-V6-SELECT"],
+            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/balance.svg"
         },
         {
             name: "CF",
             type: "select",
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/speed.svg",
-            proxies: ["V4-AUTO","V4-SELECT","V6-AUTO","V6-SELECT"],
-        },
-        {   
-            name: "CHAIN",
-            type: "select",
-            url: "http://www.gstatic.com/generate_204",
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/balance.svg",
-            proxies: ["CHAIN-AUTO-V4",
-                      "CHAIN-SELECT-V4",
-                      "CHAIN-AUTO-V6",
-                      "CHAIN-SELECT-V6"
-            ],
-        },
-        {
-            name: "CHAIN-AUTO-V4",
-            type: "relay",
-            url: "http://www.gstatic.com/generate_204",
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/balance.svg",
-            proxies: ["V4-AUTO","PIA-AUTO"],
-        },    
-        {   name: "CHAIN-AUTO-V6",
-            type: "relay",
-            url: "http://www.gstatic.com/generate_204",
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/balance.svg",
-            proxies: ["V6-AUTO","PIA-AUTO"],
-        },
-        {
-            name: "CHAIN-SELECT-V4",
-            type: "relay",
-            url: "http://www.gstatic.com/generate_204",
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/balance.svg",
-            proxies: ["V4-SELECT","PIA-SELECT"],
-        },
-        {   
-            name: "CHAIN-SELECT-V6",
-            type: "relay",
-            url: "http://www.gstatic.com/generate_204",
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/balance.svg",
-            proxies: ["V6-SELECT","PIA-SELECT"],
-        },
-        {
-            name: "漏网之鱼",
-            type: "select",
-            proxies: ["DIRECT", proxyName],
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/fish.svg"
-        },
-        {
-            name: "广告拦截",
-            type: "select",
-            proxies: ["REJECT", "DIRECT", proxyName],
-            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/block.svg"
-        },
+            proxies: ["V4-AUTO", "V6-AUTO", "V4-SELECT", "V6-SELECT"],
+            icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/speed.svg"
+        }
     ];
 
-    autoProxyGroups.length &&
-        groups [2].proxies.unshift (...autoProxyGroups.map ((item) => item.name));
-    groups.push (...autoProxyGroups);
-    groups.push (...manualProxyGroupsConfig);
-    params ["proxy-groups"] = groups;
+    // relay 链式代理分组，添加 PIA 出口
+    const relayGroups = [
+        {
+            name: "CHAIN-V4-AUTO",
+            type: "relay",
+            proxies: ["V4-AUTO", "PIA-AUTO"]
+        },
+        {
+            name: "CHAIN-V6-AUTO",
+            type: "relay",
+            proxies: ["V6-AUTO", "PIA-AUTO"]
+        },
+        {
+            name: "CHAIN-V4-SELECT",
+            type: "relay",
+            proxies: ["V4-SELECT", "PIA-SELECT"]
+        },
+        {
+            name: "CHAIN-V6-SELECT",
+            type: "relay",
+            proxies: ["V6-SELECT", "PIA-SELECT"]
+        }
+    ];
 
+    // 注入所有代理分组
+    params["proxy-groups"] = [
+        v4Auto,
+        v6Auto,
+        v4Select,
+        v6Select,
+        piaAuto,
+        piaSelect,
+        ...groups,
+        ...relayGroups
+    ];
 }
+
 // 防止 dns 泄露
 function overwriteDns (params) {
     const cnDnsList = [
