@@ -11,7 +11,7 @@ dns:
   ipv6: false
   enhanced-mode: fake-ip
   nameserver:
-    - https://dns.alidns.com/dns-query
+    - 233.5.5.5
   default-nameserver:
     - 114.114.114.114
     - 8.8.8.8
