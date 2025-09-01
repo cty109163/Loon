@@ -31,7 +31,7 @@ dns:
     - ntp.*.com
     - +.market.xiaomi.com
   proxy-server-nameserver:
-    - https://1.1.1.1/dns-query
+    #- https://1.1.1.1/dns-query
 
 proxy-providers:
   entrance:
