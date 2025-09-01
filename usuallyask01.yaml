@@ -30,7 +30,7 @@ dns:
     - time.*.com
     - ntp.*.com
     - +.market.xiaomi.com
-  proxy-server-nameserver:
+  #proxy-server-nameserver:
     #- https://1.1.1.1/dns-query
 
 proxy-providers:
